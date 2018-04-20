@@ -1,0 +1,12 @@
+{
+  "name": "Simple",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel public/index.html"
+  },
+  "dependencies": {
+    "typescript": "^2.8.3"
+  }
+}
