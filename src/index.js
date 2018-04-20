@@ -7,7 +7,19 @@ const input = new Simple({
 new Simple({
 	root: 'root',
 	// data: input,
-	data: 'This is a test ' + input
+	// data: 'This is a test ' + input
+	// data: [
+	// 	'This is a test',
+	// 	'And another one',
+	// 	'And another one'
+	// ]
+	data: {
+		1: [
+			'This is a test',
+			'And another one',
+			'And another one'
+		]
+	}
 	// data: {
 	// 	1: [
 	// 		'This is a test',

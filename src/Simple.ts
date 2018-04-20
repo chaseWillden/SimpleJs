@@ -11,7 +11,7 @@ export default class Simple {
 
 	el: SimpleElement = null;
 	options: Options;
-	children: string | Array<any> | {[s:any]:any};
+	children: Array<Simple> = [];
 	isRendered = false;
 	renderedResults : SimpleElement;
 
@@ -29,6 +29,40 @@ export default class Simple {
 
 		this.renderer.init();
 		this.isRendered = true;
+	}
+
+	/**
+	 * Append a string
+	 * @param val 
+	 */
+	appendString(val: string){
+		if (this.el) {
+			this.el.appendString(val);
+		}
+		else {
+			this.el = SimpleElement.Create('text');
+			this.appendString(val);
+		}
+	}
+
+	/**
+	 * Add children
+	 * @param simples 
+	 */
+	addChildren(simples: Simple[]){
+		this.children = this.children.concat(simples);
+		for (let i = 0; i < simples.length; i++){
+			this.el.appendChild(simples[i].el);
+		}
+	}
+
+	/**
+	 * Add child to tree
+	 * @param simple 
+	 */
+	addChild(simple: Simple){
+		this.children.push(simple);
+		this.el.appendChild(simple.el);
 	}
 
 	/**
@@ -57,6 +91,9 @@ export default class Simple {
 		return this.key;
 	}
 
+	/** 
+	 * Set generated key
+	 */
 	private setKey(){
 		this.key = '__SIMPLE__::' + totalObjects++;
 	}

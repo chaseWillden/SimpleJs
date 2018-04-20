@@ -32,6 +32,40 @@ export default class Render{
 		this.data = this.simple.getData();
 		this.checkIfSimpleAndRender();
 		this.checkIfStringAndRender();
+		this.checkIfObjectAndRender();
+		this.checkIfArrayAndRender();
+	}
+
+	/**
+	 * Check if its an object and render
+	 */
+	private checkIfObjectAndRender(){
+		if (Types.IsObject(this.data)){
+			this.simple.el = SimpleElement.Create('div');
+			var keys = Object.keys(this.data);
+			for (let i = 0; i < keys.length; i++){
+				var child = this.data[keys[i]];
+				var simple = new Simple({data: child});
+				this.simple.addChild(simple);
+			}
+		}
+	}
+
+	/**
+	 * Check if the data is an array and render each
+	 * child
+	 */
+	private checkIfArrayAndRender(){
+		if (Types.IsArray(this.data)){
+			const ul = new Simple({type: 'ul'});
+			for (let i = 0; i < this.data.length; i++){
+				const li = new Simple({type: 'li'});
+				const child = new Simple({data: this.data[i]});
+				li.addChild(child);
+				ul.addChild(li);
+			}
+			this.simple.addChild(ul);
+		}
 	}
 
 	/**
@@ -42,7 +76,7 @@ export default class Render{
 			const matched = this.data.match(/__SIMPLE__::([0-9]+)/g);
 
 			if (!matched) {
-				return this.simple.el.appendString(this.data);
+				return this.simple.appendString(this.data);
 			}
 
 			this.replaceKeyWithValue(matched);
@@ -71,7 +105,7 @@ export default class Render{
 	private checkIfSimpleAndRender(){
 		if (this.data instanceof Simple) {
 			const children = this.data.render();
-			this.simple.el.appendChild(children);
+			this.simple.addChild(this.data as Simple);
 		}
 	}
 }
