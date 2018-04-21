@@ -31,11 +31,21 @@ export default class Simple {
 		this.isRendered = true;
 	}
 
+	appendNumber(val: number){
+		if (this.el) {
+			this.el.appendString(val);
+		}
+		else {
+			this.el = SimpleElement.Create('number');
+			this.appendString(val);
+		}
+	}
+
 	/**
 	 * Append a string
 	 * @param val 
 	 */
-	appendString(val: string){
+	appendString(val: string | number){
 		if (this.el) {
 			this.el.appendString(val);
 		}
@@ -62,7 +72,9 @@ export default class Simple {
 	 */
 	addChild(simple: Simple){
 		this.children.push(simple);
-		this.el.appendChild(simple.el);
+		if (this.el) {
+			this.el.appendChild(simple.el);	
+		}
 	}
 
 	/**
@@ -105,6 +117,10 @@ export default class Simple {
 		const type = this.options.type;
 		if (Types.IsString(type)){
 			this.el = SimpleElement.Create(type);
+			
+			if (this.options.data) {
+				this.el.setValue(this.options.data);
+			}
 		}
 	}
 

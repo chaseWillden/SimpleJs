@@ -1,7 +1,8 @@
 import Simple from './Simple';
 
 const input = new Simple({
-	type: 'input'
+	// type: 'input',
+	data: 1
 });
 
 new Simple({
@@ -17,8 +18,10 @@ new Simple({
 		1: [
 			'This is a test',
 			'And another one',
-			'And another one'
-		]
+			'And another one ' + input,
+			'And yet another one ' + input
+		],
+		2: input
 	}
 	// data: {
 	// 	1: [

@@ -25,14 +25,14 @@ export default class SimpleElement {
 		if (this.ele instanceof HTMLInputElement){
 			return this.ele.value;
 		}
-		return '';
+		return this.ele.innerText;
 	}
 
 	/**
 	 * Append string as text
 	 * @param {string} val [description]
 	 */
-	appendString(val: string) {
+	appendString(val: string | number) {
 		this.ele.innerText += val;
 	}
 
@@ -41,6 +41,8 @@ export default class SimpleElement {
 	 * @param {SimpleElement} child [description]
 	 */
 	appendChild(child: SimpleElement | SimpleElement[]) {
+		if (!child) return;
+
 		if (Types.IsArray(child)) {
 			for (let i = 0; i < (child as SimpleElement[]).length; i++){
 				this.ele.appendChild(child[i].ele);
@@ -50,6 +52,16 @@ export default class SimpleElement {
 		else if (Types.IsHtmlElement((child as SimpleElement).ele)) {
 			this.ele.appendChild((child as SimpleElement).ele)
 			this.children.push((child as SimpleElement));
+		}
+	}
+
+	/**
+	 * Set value to element
+	 * @param val 
+	 */
+	setValue(val: any) {
+		if (this.ele instanceof HTMLInputElement) {
+			this.ele.value = val;
 		}
 	}
 

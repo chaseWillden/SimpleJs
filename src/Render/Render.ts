@@ -32,6 +32,7 @@ export default class Render{
 		this.data = this.simple.getData();
 		this.checkIfSimpleAndRender();
 		this.checkIfStringAndRender();
+		this.checkIfNumberAndRender();
 		this.checkIfObjectAndRender();
 		this.checkIfArrayAndRender();
 	}
@@ -41,12 +42,19 @@ export default class Render{
 	 */
 	private checkIfObjectAndRender(){
 		if (Types.IsObject(this.data)){
-			this.simple.el = SimpleElement.Create('div');
+			if (!this.simple.el) {
+				this.simple.el = SimpleElement.Create('div');
+			}
 			var keys = Object.keys(this.data);
 			for (let i = 0; i < keys.length; i++){
 				var child = this.data[keys[i]];
-				var simple = new Simple({data: child});
-				this.simple.addChild(simple);
+				if (Types.IsSimple(child)) {
+					this.simple.addChild(child);
+				}
+				else {
+					var simple = new Simple({data: child});
+					this.simple.addChild(simple);
+				}
 			}
 		}
 	}
@@ -58,13 +66,15 @@ export default class Render{
 	private checkIfArrayAndRender(){
 		if (Types.IsArray(this.data)){
 			const ul = new Simple({type: 'ul'});
+			if (!this.simple.el) {
+				this.simple.el = ul.el;
+			}
 			for (let i = 0; i < this.data.length; i++){
 				const li = new Simple({type: 'li'});
 				const child = new Simple({data: this.data[i]});
 				li.addChild(child);
-				ul.addChild(li);
+				this.simple.addChild(li);
 			}
-			this.simple.addChild(ul);
 		}
 	}
 
@@ -78,9 +88,17 @@ export default class Render{
 			if (!matched) {
 				return this.simple.appendString(this.data);
 			}
-
 			this.replaceKeyWithValue(matched);
-			this.simple.el.appendString(this.data);
+			this.simple.appendString(this.data);
+		}
+	}
+
+	/** 
+	 * Check if numnber and render
+	 */
+	private checkIfNumberAndRender(){
+		if (Types.IsNumber(this.data)) {
+			this.simple.appendNumber(this.data);
 		}
 	}
 
@@ -103,9 +121,8 @@ export default class Render{
 	 * Check if a simple object and render
 	 */
 	private checkIfSimpleAndRender(){
-		if (this.data instanceof Simple) {
-			const children = this.data.render();
-			this.simple.addChild(this.data as Simple);
+		if (Types.IsSimple(this.data)) {
+			this.simple.addChild(this.data);
 		}
 	}
 }

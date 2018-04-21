@@ -1,3 +1,5 @@
+import Simple from "../Simple";
+
 var objectConstructor = ({}).constructor;
 
 export default class Types {
@@ -31,5 +33,21 @@ export default class Types {
 	 */
 	static IsHtmlElement(val: any) {
 		return val instanceof HTMLElement;
+	}
+
+	/**
+	 * Check if it is a simple
+	 * @param val
+	 */
+	static IsSimple(val: any){
+		return val instanceof Simple;
+	}
+
+	/**
+	 * Check if its a number
+	 * @param val 
+	 */
+	static IsNumber(val: any){
+		return typeof val === 'number';
 	}
 }
