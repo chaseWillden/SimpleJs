@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "parcel public/index.html"
+    "start": "parcel public/index.html --no-hmr"
   },
   "dependencies": {
     "parcel-bundler": "^1.7.1",

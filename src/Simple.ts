@@ -29,7 +29,16 @@ export default class Simple {
 
 		this.renderer.init();
 		this.isRendered = true;
-	}
+  }
+  
+  setValue(val: number) {
+    if (!this.el) {
+      throw new Error('Issues');
+    }
+    else {
+      this.el.setValue(val);
+    }
+  }
 
 	/**
 	 * Append a string
@@ -61,8 +70,10 @@ export default class Simple {
 	 * @param simple 
 	 */
 	addChild(simple: Simple){
-		this.children.push(simple);
-		this.el.appendChild(simple.el);
+		if (this.el && simple.el) {
+      this.children.push(simple);
+		  this.el.appendChild(simple.el);
+    }
 	}
 
 	/**
@@ -118,7 +129,15 @@ export default class Simple {
 		}
 		else if (Types.IsHtmlElement(root)) {
 			this.el = new SimpleElement(root as HTMLElement);
-		}
+    }
+    else if (Types.IsSimpleElement(root)){
+      this.el = root as SimpleElement;
+    }
+    else if (Types.IsSimple(root)) {
+      const sim = root as Simple;
+      this.el = sim.el;
+      sim.children.push(this);
+    }
 	}
 
 	/**

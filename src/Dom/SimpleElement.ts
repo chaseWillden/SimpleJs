@@ -16,14 +16,23 @@ export default class SimpleElement {
 		else {
 			Logging.Error('Unexpected type');
 		}
-	}
+  }
+  
+  setValue(val: any){
+    if (Types.IsInputEle(this.ele)){
+      (this.ele as HTMLInputElement).value = val;
+    }
+    else {
+      this.ele.innerText = val;
+    }
+  }
 
 	/**
 	 * Get value if an input
 	 */
 	getValue(){
-		if (this.ele instanceof HTMLInputElement){
-			return this.ele.value;
+		if (Types.IsInputEle(this.ele)){
+			return (this.ele as HTMLInputElement).value;
 		}
 		return '';
 	}
@@ -48,8 +57,13 @@ export default class SimpleElement {
 			}
 		}
 		else if (Types.IsHtmlElement((child as SimpleElement).ele)) {
-			this.ele.appendChild((child as SimpleElement).ele)
-			this.children.push((child as SimpleElement));
+			try {
+        this.ele.appendChild((child as SimpleElement).ele)
+			  this.children.push((child as SimpleElement));
+      }
+      catch (e) {
+        console.error(e);
+      }
 		}
 	}
 
