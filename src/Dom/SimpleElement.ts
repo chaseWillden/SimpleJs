@@ -34,14 +34,14 @@ export default class SimpleElement {
 		if (Types.IsInputEle(this.ele)){
 			return (this.ele as HTMLInputElement).value;
 		}
-		return '';
+		return this.ele.innerText;
 	}
 
 	/**
 	 * Append string as text
 	 * @param {string} val [description]
 	 */
-	appendString(val: string) {
+	appendString(val: string | number) {
 		this.ele.innerText += val;
 	}
 
@@ -50,6 +50,8 @@ export default class SimpleElement {
 	 * @param {SimpleElement} child [description]
 	 */
 	appendChild(child: SimpleElement | SimpleElement[]) {
+		if (!child) return;
+
 		if (Types.IsArray(child)) {
 			for (let i = 0; i < (child as SimpleElement[]).length; i++){
 				this.ele.appendChild(child[i].ele);

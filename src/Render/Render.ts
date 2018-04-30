@@ -32,6 +32,7 @@ export default class Render{
 		this.data = this.simple.getData();
 		this.checkIfSimpleAndRender();
 		this.checkIfStringAndRender();
+		this.checkIfNumberAndRender();
 		this.checkIfObjectAndRender();
     this.checkIfArrayAndRender();
     this.checkIfNumberAndRender();
@@ -80,7 +81,6 @@ export default class Render{
 			if (!matched) {
 				return this.simple.appendString(this.data);
 			}
-
 			this.replaceKeyWithValue(matched);
 			this.simple.appendString(this.data);
 		}

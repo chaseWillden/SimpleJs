@@ -77,10 +77,14 @@ parcelRequire = (function (modules, cache, entry) {
 
   // Override the current require with this new one
   return newRequire;
-})({7:[function(require,module,exports) {
+})({4:[function(require,module,exports) {
 "use strict";
 
+var __importDefault = this && this.__importDefault || function (mod) {
+    return mod && mod.__esModule ? mod : { "default": mod };
+};
 exports.__esModule = true;
+var Simple_1 = __importDefault(require("../Simple"));
 var objectConstructor = {}.constructor;
 var Types = /** @class */function () {
     function Types() {}
@@ -112,10 +116,24 @@ var Types = /** @class */function () {
     Types.IsHtmlElement = function (val) {
         return val instanceof HTMLElement;
     };
+    /**
+     * Check if it is a simple
+     * @param val
+     */
+    Types.IsSimple = function (val) {
+        return val instanceof Simple_1["default"];
+    };
+    /**
+     * Check if its a number
+     * @param val
+     */
+    Types.IsNumber = function (val) {
+        return typeof val === 'number';
+    };
     return Types;
 }();
 exports["default"] = Types;
-},{}],16:[function(require,module,exports) {
+},{"../Simple":3}],7:[function(require,module,exports) {
 "use strict";
 
 exports.__esModule = true;
@@ -138,7 +156,7 @@ var Logging = /** @class */function () {
     return Logging;
 }();
 exports["default"] = Logging;
-},{}],8:[function(require,module,exports) {
+},{}],5:[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -165,7 +183,7 @@ var SimpleElement = /** @class */function () {
         if (this.ele instanceof HTMLInputElement) {
             return this.ele.value;
         }
-        return '';
+        return this.ele.innerText;
     };
     /**
      * Append string as text
@@ -179,6 +197,7 @@ var SimpleElement = /** @class */function () {
      * @param {SimpleElement} child [description]
      */
     SimpleElement.prototype.appendChild = function (child) {
+        if (!child) return;
         if (Types_1["default"].IsArray(child)) {
             for (var i = 0; i < child.length; i++) {
                 this.ele.appendChild(child[i].ele);
@@ -187,6 +206,15 @@ var SimpleElement = /** @class */function () {
         } else if (Types_1["default"].IsHtmlElement(child.ele)) {
             this.ele.appendChild(child.ele);
             this.children.push(child);
+        }
+    };
+    /**
+     * Set value to element
+     * @param val
+     */
+    SimpleElement.prototype.setValue = function (val) {
+        if (this.ele instanceof HTMLInputElement) {
+            this.ele.value = val;
         }
     };
     /**
@@ -216,7 +244,7 @@ var SimpleElement = /** @class */function () {
     return SimpleElement;
 }();
 exports["default"] = SimpleElement;
-},{"../Utils/Types":7,"../Utils/Logging":16}],9:[function(require,module,exports) {
+},{"../Utils/Types":4,"../Utils/Logging":7}],6:[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -250,6 +278,7 @@ var Render = /** @class */function () {
         this.data = this.simple.getData();
         this.checkIfSimpleAndRender();
         this.checkIfStringAndRender();
+        this.checkIfNumberAndRender();
         this.checkIfObjectAndRender();
         this.checkIfArrayAndRender();
     };
@@ -258,12 +287,18 @@ var Render = /** @class */function () {
      */
     Render.prototype.checkIfObjectAndRender = function () {
         if (Types_1["default"].IsObject(this.data)) {
-            this.simple.el = SimpleElement_1["default"].Create('div');
+            if (!this.simple.el) {
+                this.simple.el = SimpleElement_1["default"].Create('div');
+            }
             var keys = Object.keys(this.data);
             for (var i = 0; i < keys.length; i++) {
                 var child = this.data[keys[i]];
-                var simple = new Simple_1["default"]({ data: child });
-                this.simple.addChild(simple);
+                if (Types_1["default"].IsSimple(child)) {
+                    this.simple.addChild(child);
+                } else {
+                    var simple = new Simple_1["default"]({ data: child });
+                    this.simple.addChild(simple);
+                }
             }
         }
     };
@@ -274,13 +309,15 @@ var Render = /** @class */function () {
     Render.prototype.checkIfArrayAndRender = function () {
         if (Types_1["default"].IsArray(this.data)) {
             var ul = new Simple_1["default"]({ type: 'ul' });
+            if (!this.simple.el) {
+                this.simple.el = ul.el;
+            }
             for (var i = 0; i < this.data.length; i++) {
                 var li = new Simple_1["default"]({ type: 'li' });
                 var child = new Simple_1["default"]({ data: this.data[i] });
                 li.addChild(child);
-                ul.addChild(li);
+                this.simple.addChild(li);
             }
-            this.simple.addChild(ul);
         }
     };
     /**
@@ -293,7 +330,15 @@ var Render = /** @class */function () {
                 return this.simple.appendString(this.data);
             }
             this.replaceKeyWithValue(matched);
-            this.simple.el.appendString(this.data);
+            this.simple.appendString(this.data);
+        }
+    };
+    /**
+     * Check if numnber and render
+     */
+    Render.prototype.checkIfNumberAndRender = function () {
+        if (Types_1["default"].IsNumber(this.data)) {
+            this.simple.appendNumber(this.data);
         }
     };
     /**
@@ -314,15 +359,14 @@ var Render = /** @class */function () {
      * Check if a simple object and render
      */
     Render.prototype.checkIfSimpleAndRender = function () {
-        if (this.data instanceof Simple_1["default"]) {
-            var children = this.data.render();
+        if (Types_1["default"].IsSimple(this.data)) {
             this.simple.addChild(this.data);
         }
     };
     return Render;
 }();
 exports["default"] = Render;
-},{"../Simple":4,"../Dom/SimpleElement":8,"../Utils/Types":7}],4:[function(require,module,exports) {
+},{"../Simple":3,"../Dom/SimpleElement":5,"../Utils/Types":4}],3:[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -348,6 +392,14 @@ var Simple = /** @class */function () {
         this.renderer.init();
         this.isRendered = true;
     }
+    Simple.prototype.appendNumber = function (val) {
+        if (this.el) {
+            this.el.appendString(val);
+        } else {
+            this.el = SimpleElement_1["default"].Create('number');
+            this.appendString(val);
+        }
+    };
     /**
      * Append a string
      * @param val
@@ -376,7 +428,9 @@ var Simple = /** @class */function () {
      */
     Simple.prototype.addChild = function (simple) {
         this.children.push(simple);
-        this.el.appendChild(simple.el);
+        if (this.el) {
+            this.el.appendChild(simple.el);
+        }
     };
     /**
      * Render the simple object
@@ -413,6 +467,9 @@ var Simple = /** @class */function () {
         var type = this.options.type;
         if (Types_1["default"].IsString(type)) {
             this.el = SimpleElement_1["default"].Create(type);
+            if (this.options.data) {
+                this.el.setValue(this.options.data);
+            }
         }
     };
     /**
@@ -442,7 +499,7 @@ var Simple = /** @class */function () {
     return Simple;
 }();
 exports["default"] = Simple;
-},{"./Utils/Types":7,"./Dom/SimpleElement":8,"./Render/Render":9}],2:[function(require,module,exports) {
+},{"./Utils/Types":4,"./Dom/SimpleElement":5,"./Render/Render":6}],2:[function(require,module,exports) {
 'use strict';
 
 var _Simple = require('./Simple');
@@ -452,7 +509,8 @@ var _Simple2 = _interopRequireDefault(_Simple);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var input = new _Simple2.default({
-	type: 'input'
+	// type: 'input',
+	data: 1
 });
 
 new _Simple2.default({
@@ -465,7 +523,8 @@ new _Simple2.default({
 	// 	'And another one'
 	// ]
 	data: {
-		1: ['This is a test', 'And another one', 'And another one']
+		1: ['This is a test', 'And another one', 'And another one ' + input, 'And yet another one ' + input],
+		2: input
 		// data: {
 		// 	1: [
 		// 		'This is a test',
@@ -477,7 +536,7 @@ new _Simple2.default({
 	} });
 
 console.log(_Simple2.default.__getCache());
-},{"./Simple":4}],26:[function(require,module,exports) {
+},{"./Simple":3}],16:[function(require,module,exports) {
 
 var OVERLAY_ID = '__parcel__error__overlay__';
 
@@ -507,7 +566,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '62483' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '58052' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
@@ -646,5 +705,5 @@ function hmrAccept(bundle, id) {
     return hmrAccept(global.parcelRequire, id);
   });
 }
-},{}]},{},[26,2])
+},{}]},{},[16,2])
 //# sourceMappingURL=/src.1682d4ac.map

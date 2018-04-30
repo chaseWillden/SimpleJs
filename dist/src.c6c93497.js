@@ -77,7 +77,7 @@ parcelRequire = (function (modules, cache, entry) {
 
   // Override the current require with this new one
   return newRequire;
-})({18:[function(require,module,exports) {
+})({16:[function(require,module,exports) {
 "use strict";
 
 exports.__esModule = true;
@@ -100,7 +100,7 @@ var Logging = /** @class */function () {
     return Logging;
 }();
 exports["default"] = Logging;
-},{}],10:[function(require,module,exports) {
+},{}],8:[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -134,7 +134,7 @@ var SimpleElement = /** @class */function () {
         if (Types_1["default"].IsInputEle(this.ele)) {
             return this.ele.value;
         }
-        return '';
+        return this.ele.innerText;
     };
     /**
      * Append string as text
@@ -148,6 +148,7 @@ var SimpleElement = /** @class */function () {
      * @param {SimpleElement} child [description]
      */
     SimpleElement.prototype.appendChild = function (child) {
+        if (!child) return;
         if (Types_1["default"].IsArray(child)) {
             for (var i = 0; i < child.length; i++) {
                 this.ele.appendChild(child[i].ele);
@@ -189,7 +190,7 @@ var SimpleElement = /** @class */function () {
     return SimpleElement;
 }();
 exports["default"] = SimpleElement;
-},{"../Utils/Types":9,"../Utils/Logging":18}],9:[function(require,module,exports) {
+},{"../Utils/Types":7,"../Utils/Logging":16}],7:[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -260,7 +261,7 @@ var Types = /** @class */function () {
     return Types;
 }();
 exports["default"] = Types;
-},{"../Simple":6,"../Dom/SimpleElement":10}],11:[function(require,module,exports) {
+},{"../Simple":4,"../Dom/SimpleElement":8}],9:[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -293,6 +294,7 @@ var Render = /** @class */function () {
         this.data = this.simple.getData();
         this.checkIfSimpleAndRender();
         this.checkIfStringAndRender();
+        this.checkIfNumberAndRender();
         this.checkIfObjectAndRender();
         this.checkIfArrayAndRender();
         this.checkIfNumberAndRender();
@@ -366,7 +368,7 @@ var Render = /** @class */function () {
     return Render;
 }();
 exports["default"] = Render;
-},{"../Simple":6,"../Utils/Types":9}],6:[function(require,module,exports) {
+},{"../Simple":4,"../Utils/Types":7}],4:[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -397,6 +399,14 @@ var Simple = /** @class */function () {
             throw new Error('Issues');
         } else {
             this.el.setValue(val);
+        }
+    };
+    Simple.prototype.appendNumber = function (val) {
+        if (this.el) {
+            this.el.appendString(val);
+        } else {
+            this.el = SimpleElement_1["default"].Create('number');
+            this.appendString(val);
         }
     };
     /**
@@ -466,6 +476,9 @@ var Simple = /** @class */function () {
         var type = this.options.type;
         if (Types_1["default"].IsString(type)) {
             this.el = SimpleElement_1["default"].Create(type);
+            if (this.options.data) {
+                this.el.setValue(this.options.data);
+            }
         }
     };
     /**
@@ -501,7 +514,7 @@ var Simple = /** @class */function () {
     return Simple;
 }();
 exports["default"] = Simple;
-},{"./Utils/Types":9,"./Dom/SimpleElement":10,"./Render/Render":11}],4:[function(require,module,exports) {
+},{"./Utils/Types":7,"./Dom/SimpleElement":8,"./Render/Render":9}],2:[function(require,module,exports) {
 'use strict';
 
 var _Simple = require('./Simple');
@@ -545,5 +558,5 @@ new _Simple2.default({
 });
 
 console.log(_Simple2.default.__getCache());
-},{"./Simple":6}]},{},[4])
+},{"./Simple":4}]},{},[2])
 //# sourceMappingURL=/src.c6c93497.map

@@ -1,5 +1,8 @@
 import Simple from "../Simple";
+<<<<<<< HEAD
 import SimpleElement from "../Dom/SimpleElement";
+=======
+>>>>>>> 988ffa6aacd98c439c1d6c875c286d7cd7df3add
 
 var objectConstructor = ({}).constructor;
 
@@ -34,6 +37,7 @@ export default class Types {
 	 */
 	static IsHtmlElement(val: any) {
 		return val instanceof HTMLElement;
+<<<<<<< HEAD
   }
   
   /**
@@ -67,4 +71,23 @@ export default class Types {
   static IsInputEle(val: any) {
     return val instanceof HTMLInputElement;
   }
+=======
+	}
+
+	/**
+	 * Check if it is a simple
+	 * @param val
+	 */
+	static IsSimple(val: any){
+		return val instanceof Simple;
+	}
+
+	/**
+	 * Check if its a number
+	 * @param val 
+	 */
+	static IsNumber(val: any){
+		return typeof val === 'number';
+	}
+>>>>>>> 988ffa6aacd98c439c1d6c875c286d7cd7df3add
 }
